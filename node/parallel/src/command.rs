@@ -28,10 +28,11 @@ use sc_cli::{
 };
 use sc_service::{
     config::{BasePath, PrometheusConfig},
-    PartialComponents,
+    DatabaseSource, PartialComponents,
 };
 use sp_core::hexdisplay::HexDisplay;
 use sp_runtime::traits::Block as BlockT;
+use sp_std::sync::Arc;
 
 use std::{io::Write, net::SocketAddr};
 
@@ -401,7 +402,11 @@ pub fn run() -> Result<()> {
             })
         }
         None => {
-            let runner = cli.create_runner(&cli.run.normalize())?;
+            let mut runner = cli.create_runner(&cli.run.normalize())?;
+
+            runner.config_mut().database =
+                DatabaseSource::Custom(Arc::new(sp_database::MemDb::new()));
+
             let chain_spec = &runner.config().chain_spec;
 
             set_default_ss58_version(chain_spec);

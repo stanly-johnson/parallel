@@ -6153,6 +6153,7 @@ dependencies = [
  "sp-consensus",
  "sp-consensus-aura",
  "sp-core",
+ "sp-database",
  "sp-inherents",
  "sp-keystore",
  "sp-offchain",
