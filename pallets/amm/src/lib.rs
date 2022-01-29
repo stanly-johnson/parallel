@@ -365,6 +365,32 @@ pub mod pallet {
 
             Ok(().into())
         }
+
+        // ***************************************************************************************
+        #[pallet::weight(T::AMMWeightInfo::swap_exact_tokens_for_tokens())]
+        #[transactional]
+        pub fn swap_exact_tokens_for_tokens(
+            origin: OriginFor<T>,
+            pair: (AssetIdOf<T, I>, AssetIdOf<T, I>),
+            liquidity_amounts: (BalanceOf<T, I>, BalanceOf<T, I>),
+            lptoken_receiver: T::AccountId,
+            lp_token_id: AssetIdOf<T, I>,
+        ) -> DispatchResultWithPostInfo {
+            Ok(().into())
+        }
+
+        #[pallet::weight(T::AMMWeightInfo::swap_tokens_for_exact_tokens())]
+        #[transactional]
+        pub fn swap_tokens_for_exact_tokens(
+            origin: OriginFor<T>,
+            pair: (AssetIdOf<T, I>, AssetIdOf<T, I>),
+            liquidity_amounts: (BalanceOf<T, I>, BalanceOf<T, I>),
+            lptoken_receiver: T::AccountId,
+            lp_token_id: AssetIdOf<T, I>,
+        ) -> DispatchResultWithPostInfo {
+            Ok(().into())
+        }
+        // ***************************************************************************************
     }
 }
 
