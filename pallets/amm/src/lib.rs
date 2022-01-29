@@ -346,7 +346,7 @@ pub mod pallet {
             log::trace!(
                 target: "amm::create_pool",
                 "lptoken_receiver: {:?}, base_asset: {:?}, quote_asset: {:?}, base_amount: {:?}, quote_amount: {:?},\
-                 liquidity_amounts: {:?}",
+                liquidity_amounts: {:?}",
                 &lptoken_receiver,
                 &base_asset,
                 &quote_asset,
@@ -487,7 +487,7 @@ impl<T: Config<I>, I: 'static> Pallet<T, I> {
         log::trace!(
             target: "amm::get_amount_out",
             "amount_in: {:?}, reserve_in: {:?}, reserve_out: {:?}, fees: {:?}, numerator: {:?}, denominator: {:?},\
-             amount_out: {:?}",
+            amount_out: {:?}",
             &amount_in,
             &reserve_in,
             &reserve_out,
@@ -609,7 +609,7 @@ impl<T: Config<I>, I: 'static> Pallet<T, I> {
         log::trace!(
             target: "amm::do_add_liquidity",
             "who: {:?}, total_supply: {:?}, liquidity: {:?}, base_asset: {:?}, quote_asset: {:?}, ideal_base_amount: {:?},\
-             ideal_quote_amount: {:?}",
+            ideal_quote_amount: {:?}",
             &who,
             &total_supply,
             &liquidity,
