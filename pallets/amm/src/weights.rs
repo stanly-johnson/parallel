@@ -50,6 +50,8 @@ pub trait WeightInfo {
     fn add_liquidity() -> Weight;
     fn remove_liquidity() -> Weight;
     fn create_pool() -> Weight;
+    fn swap_tokens_for_exact_tokens() -> Weight;
+    fn swap_exact_tokens_for_tokens() -> Weight;
 }
 
 /// Weights for pallet_amm using the Substrate node and recommended hardware.
