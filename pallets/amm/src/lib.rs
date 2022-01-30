@@ -418,32 +418,6 @@ impl<T: Config<I>, I: 'static> Pallet<T, I> {
         */
     }
 
-    // TODO: Change this comment performs chained getAmountOut calculations on any number of pairs
-    fn get_amounts_out() {
-        /*
-        require(path.length >= 2, 'UniswapV2Library: INVALID_PATH');
-        amounts = new uint[](path.length);
-        amounts[0] = amountIn;
-        for (uint i; i < path.length - 1; i++) {
-            (uint reserveIn, uint reserveOut) = getReserves(factory, path[i], path[i + 1]);
-            amounts[i + 1] = getAmountOut(amounts[i], reserveIn, reserveOut);
-        }
-        */
-    }
-
-    // TODO: performs chained getAmountIn calculations on any number of pairs
-    fn get_amounts_in() {
-        /*
-        require(path.length >= 2, 'UniswapV2Library: INVALID_PATH');
-        amounts = new uint[](path.length);
-        amounts[amounts.length - 1] = amountOut;
-        for (uint i = path.length - 1; i > 0; i--) {
-            (uint reserveIn, uint reserveOut) = getReserves(factory, path[i - 1], path[i]);
-            amounts[i - 1] = getAmountIn(amounts[i], reserveIn, reserveOut);
-        }
-        */
-    }
-
     fn quote(
         base_amount: BalanceOf<T, I>,
         base_pool: BalanceOf<T, I>,
