@@ -375,7 +375,7 @@ pub mod pallet {
             liquidity_amounts: (BalanceOf<T, I>, BalanceOf<T, I>),
             lptoken_receiver: T::AccountId,
             lp_token_id: AssetIdOf<T, I>,
-        ) -> DispatchResultWithPostInfo {
+        ) -> DispatchResult {
             Ok(().into())
         }
 
@@ -387,7 +387,7 @@ pub mod pallet {
             liquidity_amounts: (BalanceOf<T, I>, BalanceOf<T, I>),
             lptoken_receiver: T::AccountId,
             lp_token_id: AssetIdOf<T, I>,
-        ) -> DispatchResultWithPostInfo {
+        ) -> DispatchResult {
             Ok(().into())
         }
         // ***************************************************************************************
