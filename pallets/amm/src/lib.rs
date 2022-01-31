@@ -138,6 +138,10 @@ pub mod pallet {
         InsufficientAmountIn,
         /// Identical assets
         IdenticalAssets,
+        /// Insufficient input amount
+        InsufficientInputAmount,
+        /// Insufficient output amount
+        InsufficientOutputAmount,
     }
 
     #[pallet::event]
@@ -379,11 +383,22 @@ pub mod pallet {
         #[transactional]
         pub fn swap_exact_tokens_for_tokens(
             origin: OriginFor<T>,
-            pair: (AssetIdOf<T, I>, AssetIdOf<T, I>),
-            liquidity_amounts: (BalanceOf<T, I>, BalanceOf<T, I>),
-            lptoken_receiver: T::AccountId,
-            lp_token_id: AssetIdOf<T, I>,
+            amount_in: BalanceOf<T, I>,
+            amount_out_min: BalanceOf<T, I>,
+            path: Path<T, I>,
+            to: T::AccountId,
         ) -> DispatchResult {
+            let mut amounts: Amounts<T, I> = Self::get_amounts_out(amount_in, path)?;
+            let mut amount_len = amounts.len();
+
+            ensure!(
+                amounts[amount_len - 1] > amount_out_min,
+                Error::<T, I>::InsufficientOutputAmount
+            );
+
+            // Self::safe_transfer_from(&path[0])
+
+            Self::swap(amounts, path, to);
             Ok(().into())
         }
 
@@ -391,11 +406,19 @@ pub mod pallet {
         #[transactional]
         pub fn swap_tokens_for_exact_tokens(
             origin: OriginFor<T>,
-            pair: (AssetIdOf<T, I>, AssetIdOf<T, I>),
-            liquidity_amounts: (BalanceOf<T, I>, BalanceOf<T, I>),
-            lptoken_receiver: T::AccountId,
-            lp_token_id: AssetIdOf<T, I>,
+            amount_out: BalanceOf<T, I>,
+            amount_in_max: BalanceOf<T, I>,
+            path: Path<T, I>,
+            to: T::AccountId,
         ) -> DispatchResult {
+            let mut amounts: Amounts<T, I> = Self::get_amounts_in(amount_in, path)?;
+            ensure!(
+                amounts[0] <= amount_in_max,
+                Error::<T, I>::InsufficientInputAmount
+            );
+
+            // Self::safe_transfer_from(&path[0])
+            Self::swap(amounts, path, to);
             Ok(().into())
         }
         // ***************************************************************************************
@@ -411,20 +434,20 @@ impl<T: Config<I>, I: 'static> Pallet<T, I> {
         T::LockAccountId::get()
     }
 
-    fn swap() {
-        /*
-        for (uint i; i < path.length - 1; i++) {
-            (address input, address output) = (path[i], path[i + 1]);
-            (address token0,) = UniswapV2Library.sortTokens(input, output);
-            uint amountOut = amounts[i + 1];
-            (uint amount0Out, uint amount1Out) = input == token0 ? (uint(0), amountOut) : (amountOut, uint(0));
-            address to = i < path.length - 2 ? UniswapV2Library.pairFor(factory, output, path[i + 2]) : _to;
-            IUniswapV2Pair(UniswapV2Library.pairFor(factory, input, output)).swap(
-                amount0Out, amount1Out, to, new bytes(0)
-            );
+    // ***************************************************************************************
+    fn swap(amounts: Vec<BalanceOf<T, I>>, path: Path<T, I>) {
+        for i in 0..(path.len() - 1) {
+            let pair = (path[i], path[i + 1]);
+            // TODO: not sure of this is correct or do we need to implemenent something new?
+
+            let (is_inverted, base_asset, quote_asset) = Self::sort_assets(pair);
+
+            let (reserve_in, reserve_out) = Self::get_reserves(path[i], path[i + 1])?;
+            let amount_out = Self::get_amount_out(amounts_out[i], reserve_in, reserve_out)?;
+            amounts_out[i + 1] = amount_out;
         }
-        */
     }
+    // ***************************************************************************************
 
     fn quote(
         base_amount: BalanceOf<T, I>,
