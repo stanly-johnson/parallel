@@ -138,8 +138,8 @@ pub mod pallet {
         InsufficientAmountIn,
         /// Identical assets
         IdenticalAssets,
-        /// Insufficient input amount
-        InsufficientInputAmount,
+        /// Additional input amount
+        AdditionalInputAmount,
         /// Insufficient output amount
         InsufficientOutputAmount,
     }
@@ -388,7 +388,7 @@ pub mod pallet {
             path: Path<T, I>,
             to: T::AccountId,
         ) -> DispatchResult {
-            let mut amounts: Amounts<T, I> = Self::get_amounts_out(amount_in, path)?;
+            let mut amounts: Amounts<T, I> = Self::get_amounts_out(amount_in, path.clone())?;
             let mut amount_len = amounts.len();
 
             ensure!(
@@ -411,10 +411,10 @@ pub mod pallet {
             path: Path<T, I>,
             to: T::AccountId,
         ) -> DispatchResult {
-            let mut amounts: Amounts<T, I> = Self::get_amounts_in(amount_in, path)?;
+            let mut amounts: Amounts<T, I> = Self::get_amounts_in(amount_in, path.clone())?;
             ensure!(
                 amounts[0] <= amount_in_max,
-                Error::<T, I>::InsufficientInputAmount
+                Error::<T, I>::AdditionalInputAmount
             );
 
             // Self::safe_transfer_from(&path[0])
@@ -435,17 +435,26 @@ impl<T: Config<I>, I: 'static> Pallet<T, I> {
     }
 
     // ***************************************************************************************
-    fn swap(amounts: Vec<BalanceOf<T, I>>, path: Path<T, I>) {
+    // TODO: Implement this
+    fn swap(amounts: Vec<BalanceOf<T, I>>, path: Path<T, I>, to: &T::AccountId) {
         for i in 0..(path.len() - 1) {
             let pair = (path[i], path[i + 1]);
-            // TODO: not sure of this is correct or do we need to implemenent something new?
 
+            // TODO: not sure of this is correct or do we need to implement something new?
             let (is_inverted, base_asset, quote_asset) = Self::sort_assets(pair);
 
-            let (reserve_in, reserve_out) = Self::get_reserves(path[i], path[i + 1])?;
-            let amount_out = Self::get_amount_out(amounts_out[i], reserve_in, reserve_out)?;
-            amounts_out[i + 1] = amount_out;
+            let amount_out = amounts[i + 1];
         }
+    }
+
+    // TODO: Implement this
+    fn safe_transfer_from(
+        asset: AssetIdOf<T, I>,
+        from: &T::AccountId,
+        to: &T::AccountId,
+        amount: BalanceOf<T, I>,
+    ) -> Result<Self::Balance, DispatchError> {
+        Ok(())
     }
     // ***************************************************************************************
 
