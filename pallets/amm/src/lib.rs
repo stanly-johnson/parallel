@@ -411,7 +411,7 @@ pub mod pallet {
             path: Path<T, I>,
             to: T::AccountId,
         ) -> DispatchResult {
-            let mut amounts: Amounts<T, I> = Self::get_amounts_in(amount_in, path.clone())?;
+            let mut amounts: Amounts<T, I> = Self::get_amounts_in(amount_out, path.clone())?;
             ensure!(
                 amounts[0] <= amount_in_max,
                 Error::<T, I>::AdditionalInputAmount
