@@ -1,8 +1,11 @@
 use super::*;
 use crate::mock::*;
+use frame_support::weights::PostDispatchInfo;
 use frame_support::{assert_noop, assert_ok};
 use frame_system::RawOrigin;
 use primitives::AMM as _;
+use sp_runtime::DispatchErrorWithPostInfo;
+use sp_runtime::{ArithmeticError::Underflow, DispatchError::Arithmetic};
 
 const MINIMUM_LIQUIDITY: u128 = 1_000;
 
@@ -764,6 +767,34 @@ fn update_oracle_should_work() {
         assert_eq!(
             AMM::pools(XDOT, DOT).unwrap().price_1_cumulative_last,
             5_843_777_518_928_363_420
+        );
+    })
+}
+
+#[test]
+fn force_reserve_overflow_should_not_work() {
+    new_test_ext().execute_with(|| {
+        assert_eq!(
+            AMM::create_pool(
+                RawOrigin::Signed(ALICE).into(),
+                (DOT, XDOT),
+                //
+                // 1.85 Billion DOT (10 decimal places) - total supply 1.1B
+                // with ~10% inflation - 2028 expected ~1.858B in total
+                // or
+                // 18.5 Million KSM (12 decimal places) - total supply 10M
+                // (18_500_000_000000000000, 18_500_000_000000000000),
+                (1_850_000_000_0000000000, 1_850_000_000_0000000000),
+                FERDIE,
+                SAMPLE_LP_TOKEN,
+            ),
+            Err(DispatchErrorWithPostInfo {
+                post_info: PostDispatchInfo {
+                    actual_weight: None,
+                    pays_fee: Pays::Yes,
+                },
+                error: Arithmetic(Underflow,),
+            },)
         );
     })
 }
