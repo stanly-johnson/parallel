@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["XcmRequest",""]],"struct":[["MatchingLedger","The matching pool’s total stake & unstake amount in one era"]]});
